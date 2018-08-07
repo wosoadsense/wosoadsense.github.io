@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>WOSO OFFLINE</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            width: 100%;
+            overflow-x: hidden;
+            font-family: "Microsoft YaHei UI","Microsoft YaHei UI Light",Arial;
+        }
+        ul,li{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+        }
+        #nav{
+            padding: 0 15px;
+            margin-top: 15px;
+            height: 42px;
+        }
+        #nav li{
+            width: 50%;
+            float: left;
+            text-align: center;
+            height: 42px;
+            line-height: 42px;
+            background-color: #777;
+            color: #fff;
+        }
+        #nav li:nth-child(1){
+            border-right: 1px solid #2e6da4;
+            border-top-left-radius: 3px;
+            border-bottom-left-radius: 3px;
+        }
+        #nav li:nth-child(2){
+            border-left: 1px solid #2e6da4;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+        }
+        #nav li.active{
+            background-color: #337ab7;
+        }
+        #nav-container{
+            padding:15px;
+        }
+        #nav-container .title{
+            background: #eee;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+        #nav-container .title::after,#container li::after{
+            content: "";
+            display: block;
+            clear: both;
+        }
+        #nav-container .title li{
+            float: left;
+            text-align: center;
+            font-size: 16px;
+            color:#000;
+            height: 32px;
+            line-height: 32px;
+        }
+        #nav-container .title li:nth-child(1),#nav-container .title li:nth-child(3),#nav-container .title li:nth-child(4),#container li>div:nth-child(1),#container li>div:nth-child(3),#container li>div:nth-child(4){
+            width: 70px;
+        }
+        #nav-container .title li:nth-child(2),#container li>div:nth-child(2){
+            width: calc(100% - 210px);
+            padding: 0 10px;
+            word-break:break-all;
+            word-wrap:break-word;
+        }
+        #container li>div:nth-child(2){
+            text-align: left;
+        }
+        #container li{
+            margin-bottom: 10px;
+        }
+        #container li>div{
+            float: left;
+            text-align: center;
+            font-size: 14px;
+        }
+        #currency{
+            position: relative;
+        }
+        #currency::after{
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border:5px solid transparent;
+            border-top: 5px solid #333;
+            position: absolute;
+            top:15px;
+            right: 5px;
+        }
+        #currency span{
+            display: block;
+        }
+        #currency .list{
+            position: absolute;
+            left: 0;
+            top:32px;
+            width: 100%;
+            background: #fff;
+            box-shadow: 0px 5px 10px rgba(0,0,0,.1);
+            display: none;
+        }
+        #currency ul li{
+
+        }
+        #currency .list a{
+            display: block;
+            font-size: 14px;
+            color:#717171;
+        }
+        svg path,
+        svg rect{
+            fill: #337ab7;
+        }
+        .leader{
+            text-align: center;
+            font-size: 14px;
+            color:#717171;
+            margin-top: 15px;
+            line-height: 20px;
+        }
+        .loader--style1{
+            display: none;
+        }
+        #fix{
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 999;
+        }
+        #fixImg{
+            position: fixed;
+            left: calc(50% - 126px);
+            top: calc(50% - 172px);
+            z-index: 1000;
+            display: none;
+        }
+        #fixImg p{
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            height: 50px;
+        }
+        #fixImg span{
+            position: absolute;
+            display: block;
+            width: 100%;
+            bottom: 70px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 24px;
+            color:#212121;
+        }
+        .navTop{
+            position: fixed;
+            width: 100%;
+            margin-top:0 !important;
+            top:0;
+        }
+        .listTop{
+            position: fixed;
+            width: calc(100% - 30px);
+            top:42px;
+        }
+    </style>
+</head>
+<body>
+    <ul id="nav">
+        <li data-type="android" class="active">Android</li>
+        <li data-type="ios">Ios</li>
+    </ul>
+    <p class="leader"></p>
+    <div id="nav-container">
+        <ul class="title">
+            <li>图标</li>
+            <li>标题</li>
+            <li id="currency">
+                <span>国家</span>
+                <div class="list"></div>
+            </li>
+            <li>价格</li>
+        </ul>
+        <div class="loader loader--style1" title="0" style="text-align: center">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           width="40px" height="40px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+          <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+            s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+            c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/>
+          <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+            C22.32,8.481,24.301,9.057,26.013,10.047z">
+            <animateTransform attributeType="xml"
+              attributeName="transform"
+              type="rotate"
+              from="0 20 20"
+              to="360 20 20"
+              dur="0.5s"
+              repeatCount="indefinite"/>
+            </path>
+          </svg>
+        </div>
+        <ul id="container"></ul>
+    </div>
+    <div id="fix">
+        <img src="wechat.png" width="42" alt="">
+    </div>
+    <div id="fixImg">
+        <img src="window.png" width="252" alt="">
+        <p></p>
+        <span>扫码联系我搜<br>客服微信: wr222_1</span>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="jweixin-1.2.0.js"></script>
+    <script>
+        $(function () {
+            var countrys = {"US":"美国","IN":"印度","ID":"印尼", "JP":"日本", "KR":"韩国", "SG":"新加坡","SA":"沙特","CN":"中国","GB":"英国","RU":"俄罗斯" }
+            var totalCoutrys = "";
+            var countryList = "";
+            var total = "";
+            for(var key in countrys){
+                total += key+",";
+                countryList += "<a href=\"javascript:void(0)\" data-currency=\""+key+"\">"+countrys[key]+"</a>";
+            }
+            total = total.slice(0,-1);
+            totalCoutrys += "<a href=\"javascript:void(0)\" data-currency=\""+total+"\">全部</a>";
+            totalCoutrys += countryList;
+            $("#currency .list").html(totalCoutrys);
+            var paltform = "";
+            $('#nav li').click(function () {
+                $(this).addClass("active").siblings().removeClass("active");
+            });
+            $("#currency span").click(function () {
+               $(this).siblings('.list').toggle();
+            });
+            $("#nav li").click(function () {
+                paltform = $(this).data("type");
+                getDate(paltform,total);
+            });
+            $("#nav li:first-child").click();
+            $("#nav,.leader,#container,#fix").click(function () {
+                $("#currency .list").hide();
+            });
+            $('#currency .list a').click(function () {
+                $(this).parent('.list').hide();
+               var  guojia = $(this).data("currency");
+                getDate(paltform,guojia);
+            });
+            $("#fix").click(function () {
+                $('#fixImg').toggle();
+            });
+            $("#fixImg p").click(function () {
+                $(this).parents("#fixImg").hide();
+            });
+            $(window).scroll(function () {
+                var scrollT = $(document).scrollTop();
+                if(scrollT>=15){
+                    $("#nav").addClass("navTop");
+                    $('body').css("padding-top","57px");
+                }else{
+                    $("#nav").removeClass("navTop");
+                    $('body').css("padding-top","0px");
+                }
+                if(scrollT>=85){
+                    $("#nav-container .title").addClass("listTop");
+                    $('body').css("padding-top","104px");
+                }else{
+                    $("#nav-container .title").removeClass("listTop");
+                }
+            });
+
+
+            function getDate(os,country) {
+                $.ajax({
+                    url:"http://api.mssp.woso.cn/offline/getOffers",
+                    type:'GET',
+                    dataType:'jsonp',
+                    jsonp:'callback',
+                    data :{"os":os,"country":country},
+                    beforeSend:function(){
+                        $('.loader--style1').show();
+                    },
+                    success:function(data){
+                        $('.loader--style1').hide();
+                        var stat = data["code"];
+                        if(!stat == 200){
+                            $("#container").html("<tr><td colspan=\"3\">数据加载失败！</td></tr>");
+                        }else{
+                            var datas = data["offers"];
+                            var total = data["total"];
+                            var upTime = data["updatetime"].slice(0,19).replace("T"," ");
+                            var leadString = "<span style='font-size:16px;letter-spacing:3px'>共</span><span style='color:#de3d3e;font-size:20px;font-weight:700;letter-spacing:1px'>"+total+"</span><span style='font-size:16px;letter-spacing:3px'>个推广产品</span><br>更新时间："+upTime+"<br>下为TOP100列表";
+                            $(".leader").html(leadString);
+                            var str = "";
+                            for(var i = 0 ; i < datas.length ; i++){
+                                var isZip = datas[i]['icon'].slice(-3);
+                                var imgId = isZip == "zip"?"appicon.png":(datas[i]['icon']||"timg.jpg");
+                                str += "<li>";
+                                str += "<div><img width='70' src="+imgId+"></div>";
+                                str += "<div>"+datas[i]['name']+"</div>";
+                                str += "<div>"+countrys[datas[i]['country']]+"</div>";
+                                str += "<div>$"+datas[i]['price']+"</div>";
+                                str += "</li>";
+                            }
+                            $("#container").html(str);
+                        }
+                    }
+                });
+            }
+
+            //分享部分
+
+            var Curl = encodeURIComponent(window.location.href.split("#")[0]);
+            var shareTitle = "实时更新：woso offline offer list";
+            var shareLink = "http://api.mssp.woso.cn/offline/index.html";
+            var shareImg = "http://api.mssp.woso.cn/offline/shareOffer.jpg";
+            var shareDesc = "点击实时查看我搜平台－海外应用推广列表";
+            $.ajax({
+                url:"http://api.mssp.woso.cn/share/sig",
+                type:'GET',
+                data:{"url":Curl},
+                dataType:'jsonp',
+                jsonp:'callback',
+                success:function (data) {
+                    wx.config({
+                        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开
+                        appId: 'wx6b16e44c186fb1b9', // 必填，公众号的唯一标识
+                        timestamp: data["timestamp"], // 必填，生成签名的时间戳
+                        nonceStr: data["noncestr"], // 必填，生成签名的随机串
+                        signature: data["signature"],// 必填，签名
+                        jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","onMenuShareQQ"] // 必填，需要使用的JS接口列表
+                    });
+                    wx.ready(function(){
+                        wx.onMenuShareTimeline({
+                            title: shareTitle,
+                            link: shareLink,
+                            imgUrl: shareImg,
+                            desc: shareDesc,
+                            success:function () {}
+                        });
+                        wx.onMenuShareAppMessage({
+                            title: shareTitle,
+                            link: shareLink,
+                            imgUrl: shareImg,
+                            desc: shareDesc,
+                            success:function () {}
+                        });
+                        wx.onMenuShareQQ({
+                            title: shareTitle,
+                            link: shareLink,
+                            imgUrl: shareImg,
+                            desc: shareDesc,
+                            success:function () {}
+                        });
+                    });
+                }
+            });
+
+
+        });
+
+
+
+
+    </script>
+</body>
+</html>
